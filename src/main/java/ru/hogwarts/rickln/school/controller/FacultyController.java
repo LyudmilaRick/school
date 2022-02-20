@@ -3,6 +3,7 @@ package ru.hogwarts.rickln.school.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.rickln.school.model.Faculty;
 import ru.hogwarts.rickln.school.service.FacultyService;
 
@@ -15,7 +16,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping("faculty")
 public class FacultyController {
-    public final FacultyService facultyService;
+    private final FacultyService facultyService;
 
     public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
@@ -26,12 +27,12 @@ public class FacultyController {
      * GET http://localhost:8080/faculty/1
      */
     @GetMapping("{id}")
-    public ResponseEntity<Faculty> getFaculty(@PathVariable long id) {
+    public Faculty getFaculty(@PathVariable long id) {
         Faculty faculty = facultyService.getFaculty(id);
         if (faculty == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(faculty);
+        return faculty;
     }
 
     /**
@@ -40,12 +41,12 @@ public class FacultyController {
      */
 
     @GetMapping
-    public ResponseEntity<Collection<Faculty>> getFacultyUseColor(@RequestParam("color") String color) {
+    public Collection<Faculty> getFacultyUseColor(@RequestParam("color") String color) {
         Collection<Faculty> facultyUseColor = facultyService.getFacultyUseColor(color);
         if (facultyUseColor.size() == 0) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(facultyUseColor);
+        return facultyUseColor;
     }
 
     /**
@@ -53,8 +54,8 @@ public class FacultyController {
      * GET http://localhost:8080//all
      */
     @GetMapping("/all")
-    public ResponseEntity<Collection<Faculty>> getAllFaculties() {
-        return ResponseEntity.ok(facultyService.getAllFaculties());
+    public Collection<Faculty> getAllFaculties() {
+        return facultyService.getAllFaculties();
     }
 
     /**
@@ -69,24 +70,24 @@ public class FacultyController {
      * PUT http://localhost:8080/faculty
      */
     @PutMapping
-    public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty faculty) {
+    public Faculty updateFaculty(@RequestBody Faculty faculty) {
         Faculty facultyForUpdate = facultyService.setFaculty(faculty);
         if (facultyForUpdate == null) {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(facultyForUpdate);
+        return facultyForUpdate;
     }
 
     /**
      * DELETE  http://localhost:8080/faculty/2
      */
     @DeleteMapping("{id}")
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable long id) {
+    public Faculty deleteFaculty(@PathVariable long id) {
         Faculty facultyForDelete = facultyService.removeFaculty(id);
         if (facultyForDelete == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(facultyForDelete);
+        return facultyForDelete;
     }
 }

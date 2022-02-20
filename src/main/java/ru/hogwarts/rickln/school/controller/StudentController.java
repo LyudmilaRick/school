@@ -3,6 +3,7 @@ package ru.hogwarts.rickln.school.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.rickln.school.model.Student;
 import ru.hogwarts.rickln.school.service.StudentService;
 
@@ -26,12 +27,12 @@ public class StudentController {
      * GET http://localhost:8080/student/1
      */
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable long id) {
+    public Student getStudent(@PathVariable long id) {
         Student student = studentService.getStudent(id);
         if (student == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(student);
+        return student ;
     }
 
     /**
@@ -39,12 +40,12 @@ public class StudentController {
      * GET 'http://localhost:8080/student?age=1'
      */
     @GetMapping
-    public ResponseEntity<Collection<Student>> getStudentUseAge(@RequestParam("age") int age) {
+    public Collection<Student> getStudentUseAge(@RequestParam("age") int age) {
         Collection<Student> studentUseAge = studentService.getStudentUseAge(age);
         if (studentUseAge.size() == 0) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(studentUseAge);
+        return studentUseAge;
     }
 
     /**
@@ -52,8 +53,8 @@ public class StudentController {
      * GET http://localhost:8080/student/all
      */
     @GetMapping("/all")
-    public ResponseEntity<Collection<Student>> getAllStudents() {
-        return ResponseEntity.ok(studentService.getAllStudents());
+    public Collection<Student> getAllStudents() {
+        return studentService.getAllStudents();
     }
 
     /**
@@ -68,25 +69,24 @@ public class StudentController {
      * PUT http://localhost:8080/student
      */
     @PutMapping
-    public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
+    public Student updateStudent(@RequestBody Student student) {
         Student studentForUpdate = studentService.setStudent(student);
         if (studentForUpdate == null) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(studentForUpdate);
+        return studentForUpdate;
     }
 
     /**
      * DELETE  http://localhost:8080/student/2
      */
     @DeleteMapping("{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable long id) {
+    public Student deleteStudent(@PathVariable long id) {
         Student studentForDelete = studentService.removeStudent(id);
         if (studentForDelete == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(studentForDelete);
+        return studentForDelete;
     }
 
 }
